@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>এম এস পাবলিক স্কুল</title>
+<style>
+  :root { --bg:#f5f7fa; --card:#ffffff; --fg:#111827; --muted:#6b7280; --brand:#1e2a78; --accent:#d71f26; --ok:#15803d; --line:#e5e7eb; color-scheme: light; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#0f172a; --card:#1e293b; --fg:#e5e7eb; --muted:#94a3b8; --brand:#3b4fb8; --accent:#ef4444; --ok:#4ade80; --line:#334155; color-scheme: dark; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family:"Noto Sans Bengali","Segoe UI",system-ui,sans-serif; line-height:1.6; }
+  .wrap { max-width:720px; margin:0 auto; padding-block:0 40px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  header { background:var(--brand); color:#fff; padding:24px 16px; border-bottom:5px solid var(--accent); margin:0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))) 16px calc(-1 * max(16px, env(safe-area-inset-left, 0px))); }
+  header h1 { margin:0; font-size:22px; }
+  header p { margin:4px 0 0; opacity:.9; font-size:14px; }
+  header .head { display:flex; align-items:center; gap:14px; }
+  header img { width:72px; height:72px; flex:0 0 auto; background:#fff; border-radius:50%; padding:4px; }
+  header .motto { margin-top:10px; font-size:14px; text-align:center; opacity:.95; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; }
+  h2 { font-size:18px; margin:0 0 10px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:6px 4px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .placeholder { color:var(--muted); font-style:italic; }
+  .notice { border-bottom:1px solid var(--line); padding:10px 0; }
+  .notice:last-child { border-bottom:0; }
+  .notice .date { color:var(--muted); font-size:13px; }
+  .notice .body { white-space:pre-wrap; margin-top:4px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px; }
+  .person { border:1px solid var(--line); border-radius:10px; padding:10px; }
+  .person strong { display:block; }
+  .person span { color:var(--muted); font-size:13px; }
+  img { max-width:100%; }
+  footer { color:var(--muted); font-size:13px; text-align:center; padding:10px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="head">
+    <img src="logo.png" alt="এম এস পাবলিক স্কুল লোগো">
+    <div>
+      <h1>এম এস পাবলিক স্কুল</h1>
+      <p>সাঁকোর পাড় স্টেশন, শিলখালী, পেকুয়া, কক্সবাজার · স্থাপিত: ২০০৮ ইং</p>
+      <p>এম এস ওয়েলফেয়ার অ্যাসোসিয়েশন কর্তৃক পরিচালিত</p>
+    </div>
+  </div>
+  <p class="motto">পড় তোমার প্রভুর নামে যিনি সৃষ্টি করেছেন</p>
+</header>
+
+<!-- ============ স্কুল-সম্পাদিত তথ্য: এখানে বসিয়ে দিন ============ -->
+
+<section>
+  <h2>প্রধান শিক্ষকের বাণী</h2>
+  <p class="placeholder">[প্রধান শিক্ষকের বাণী এখানে বসবে]</p>
+</section>
+
+<section>
+  <h2>এম এস ওয়েলফেয়ার অ্যাসোসিয়েশন</h2>
+  <p class="placeholder">[অ্যাসোসিয়েশনের পরিচয় ও সদস্যদের তালিকা এখানে বসবে]</p>
+</section>
+
+<section>
+  <h2>শিক্ষক প্যানেল</h2>
+  <p class="placeholder">[শিক্ষকদের নাম, পদবি ও যোগ্যতা এখানে বসবে]</p>
+</section>
+
+<section>
+  <h2>ক্লাস ও পরীক্ষার রুটিন</h2>
+  <p class="placeholder">[রুটিন এখানে বসবে]</p>
+</section>
+
+<section>
+  <h2>ফি কাঠামো</h2>
+  <table>
+    <thead><tr><th>ফি</th><th class="num">টাকা</th></tr></thead>
+    <tbody>
+      <tr><td>মাসিক বেতন (নার্সারি, স্ট্যান্ডার্ড, ওয়ান, টু)</td><td class="num">২২০</td></tr>
+      <tr><td>মাসিক বেতন (থ্রি, ফোর, ফাইভ)</td><td class="num">২৫০</td></tr>
+      <tr><td>মাসিক পরীক্ষা (নার্সারি–টু)</td><td class="num">৫০</td></tr>
+      <tr><td>মাসিক পরীক্ষা (থ্রি–ফাইভ)</td><td class="num">৬০</td></tr>
+      <tr><td>নতুন ভর্তি</td><td class="num">৬০০</td></tr>
+      <tr><td>পুরাতন ভর্তি</td><td class="num">৪০০</td></tr>
+    </tbody>
+  </table>
+  <p class="placeholder" style="font-size:13px">উপরের হার বর্তমান শিক্ষাবর্ষের। পূর্ণ তালিকা ও ছাড়ের নিয়ম স্কুল কার্যালয়ে জানা যাবে।</p>
+</section>
+
+<section>
+  <h2>শিক্ষার্থীদের জন্মদিনের শুভেচ্ছা</h2>
+  <p class="placeholder" id="bd-empty">এই মাসে কোনো জন্মদিন নেই, অথবা শুভেচ্ছা এখনো যোগ করা হয়নি।</p>
+  <div id="bd-list"></div>
+</section>
+
+<section>
+  <h2>নোটিশ</h2>
+  <div id="notices"><p class="placeholder">নোটিশ লোড হচ্ছে…</p></div>
+</section>
+
+<section>
+  <h2>যোগাযোগ</h2>
+  <p>ফেসবুক পেজ: <a href="https://www.facebook.com/mspublicschoolpekua" target="_blank" rel="noopener">@mspublicschoolpekua</a></p>
+  <p class="placeholder">[ঠিকানা, মোবাইল নম্বর ও ভর্তির তথ্য এখানে বসবে]</p>
+</section>
+
+<!-- ============ শেষ ============ -->
+
+<footer>© এম এস পাবলিক স্কুল</footer>
+</div>
+
+<script>
+// নোটিশ ফাইল: notices.json (অ্যাপের "নোটিশ" ট্যাব থেকে ডাউনলোড করে এই ফোল্ডারে আপলোড করুন)
+(async function loadNotices() {
+  const box = document.getElementById("notices");
+  const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  try {
+    const res = await fetch("notices.json", { cache: "no-store" });
+    const list = await res.json();
+    if (!Array.isArray(list) || !list.length) {
+      box.innerHTML = `<p class="placeholder">এখনো কোনো নোটিশ নেই।</p>`;
+      return;
+    }
+    list.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    box.innerHTML = list.map(n => `
+      <div class="notice">
+        <strong>${esc(n.title)}</strong>
+        <div class="date">${esc(n.date)}</div>
+        <div class="body">${esc(n.body || "")}</div>
+      </div>`).join("");
+  } catch (e) {
+    box.innerHTML = `<p class="placeholder">নোটিশ লোড করা যায়নি।</p>`;
+  }
+})();
+
+// জন্মদিনের শুভেচ্ছা: birthdays.json (নাম, শ্রেণি, রোল, জন্মদিন "MM-DD", অভিভাবকের সম্মতি)
+(async function loadBirthdays() {
+  const box = document.getElementById("bd-list");
+  const empty = document.getElementById("bd-empty");
+  try {
+    const res = await fetch("birthdays.json", { cache: "no-store" });
+    const list = await res.json();
+    const now = new Date();
+    const md = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const today = list.filter(x => x.md === md && x.consent !== false);
+    if (!today.length) return;
+    empty.remove();
+    box.innerHTML = today.map(x => `
+      <div class="person" style="margin-bottom:8px">
+        <strong>${String(x.name).replace(/</g, "&lt;")}</strong>
+        <span>${String(x.cls || "")}${x.roll ? " · রোল " + x.roll : ""}</span>
+        <div>প্রিয় ${String(x.name).replace(/</g, "&lt;")}, জন্মদিনের অনেক শুভেচ্ছা!</div>
+      </div>`).join("");
+  } catch (e) {
+    /* birthdays.json না থাকলে নীরবে এড়িয়ে যাবে */
+  }
+})();
+</script>
+</body>
+</html>

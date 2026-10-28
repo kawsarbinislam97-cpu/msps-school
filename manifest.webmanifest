@@ -1,9 +1,17 @@
 {
-  "name": "এম এস পাবলিক স্কুল - ফি ব্যবস্থাপনা",
-  "short_name": "MS ফি",
+  "name": "এম এস পাবলিক স্কুল - ম্যানেজমেন্ট",
+  "short_name": "এম এস স্কুল",
+  "description": "এম এস পাবলিক স্কুলের শিক্ষার্থী, ফি, ফলাফল ও প্রতিবেদন ব্যবস্থাপনা",
+  "id": "./index.html",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f5f7fa",
-  "theme_color": "#1d4ed8",
-  "lang": "bn"
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1e2a78",
+  "lang": "bn",
+  "icons": [
+    { "src": "logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
+  ]
 }

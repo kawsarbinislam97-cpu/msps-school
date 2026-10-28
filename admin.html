@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>পাবলিক বোর্ড অ্যাডমিন</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+  :root{--brand:#1e2a78;--accent:#d71f26;--bg:#eef2f9;--card:#fff;--fg:#14182b;--muted:#5b6275;--line:#e2e6ef;--ok:#15803d;--bad:#b91c1c;color-scheme:light}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1322;--card:#171f33;--fg:#e8ebf5;--muted:#a3acc2;--line:#2a3550;color-scheme:dark}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans Bengali","Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.6}
+  header{background:linear-gradient(90deg,var(--brand),#141d5a);color:#fff;padding:16px 20px;border-bottom:4px solid var(--accent);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  header h1{margin:0;font-size:20px}
+  main{max-width:900px;margin:0 auto;padding:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+  .card h2{margin:0 0 12px;font-size:17px;color:var(--brand);padding-bottom:8px;border-bottom:2px solid #e9ecf8}
+  .grid{display:grid;gap:12px;grid-template-columns:1fr}
+  @media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+  .full{grid-column:1/-1}
+  label{display:block;font-size:13px;color:var(--muted);margin:6px 0 4px}
+  input,textarea,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--card);color:var(--fg)}
+  textarea{min-height:80px}
+  button{font:inherit;padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;margin-top:8px}
+  button.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  button.danger{color:var(--bad);border-color:var(--bad)}
+  .msg{font-size:14px;margin-top:8px;min-height:18px}
+  .ok{color:var(--ok)} .bad{color:var(--bad)}
+  .thumb{max-width:100%;max-height:110px;border-radius:8px;margin-top:8px;border:1px solid var(--line);display:block}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .item{border-bottom:1px solid var(--line);padding:10px 0;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .item:last-child{border-bottom:0}
+  .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .gal div{position:relative}
+  .gal img{width:100%;height:90px;object-fit:cover;border-radius:8px;display:block}
+  .gal button{position:absolute;top:4px;right:4px;margin:0;padding:2px 8px;font-size:12px;background:#fff}
+  .note{color:var(--muted);font-size:13px}
+  .hidden{display:none!important}
+  .sec-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <h1>পাবলিক বোর্ড · অ্যাডমিন</h1>
+  <a href="public.html" style="color:#fff;font-size:14px">পাবলিক পাতা দেখুন</a>
+</header>
+<main>
+  <div id="cfg-warn" class="card hidden"><p class="bad">Supabase সেটআপ এখনো হয়নি। <code>config.js</code>-এ URL ও anon key বসান।</p></div>
+
+  <section id="login-box" class="card hidden">
+    <h2>লগইন</h2>
+    <label>ইমেইল</label><input id="email" type="email" autocomplete="username">
+    <label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password">
+    <button class="primary" id="login-btn">প্রবেশ</button>
+    <p class="msg bad" id="login-msg"></p>
+  </section>
+
+  <div id="panel" class="hidden">
+
+    <!-- ছবি -->
+    <div class="card">
+      <h2>ছবি</h2>
+      <div class="grid">
+        <div>
+          <label>লোগো</label>
+          <input type="file" accept="image/*" data-img="logo_url" data-name="logo">
+          <div class="row"><button class="primary" data-save="logo_url">আপলোড</button><button class="danger" data-clear="logo_url">মুছুন</button></div>
+          <img class="thumb" id="prev-logo_url" alt="">
+        </div>
+        <div>
+          <label>ব্যানারের ছবি (বড় ও আনুভূমিক ভালো)</label>
+          <input type="file" accept="image/*" data-img="banner_url" data-name="banner">
+          <div class="row"><button class="primary" data-save="banner_url">আপলোড</button><button class="danger" data-clear="banner_url">মুছুন</button></div>
+          <img class="thumb" id="prev-banner_url" alt="">
+        </div>
+        <div>
+          <label>পাশের ছোট ছবি</label>
+          <input type="file" accept="image/*" data-img="side_url" data-name="side">
+          <div class="row"><button class="primary" data-save="side_url">আপলোড</button><button class="danger" data-clear="side_url">মুছুন</button></div>
+          <img class="thumb" id="prev-side_url" alt="">
+        </div>
+      </div>
+      <p class="msg" id="img-msg"></p>
+    </div>
+
+    <!-- গ্যালারি -->
+    <div class="card">
+      <div class="sec-head"><h2 style="border:0;margin:0;padding:0">গ্যালারি</h2></div>
+      <label>একাধিক ছবি একসাথে বাছাই করুন</label>
+      <input type="file" accept="image/*" multiple id="gal-files">
+      <button class="primary" id="gal-upload">গ্যালারিতে যোগ করুন</button>
+      <p class="msg" id="gal-msg"></p>
+      <div class="gal" id="gal-list" style="margin-top:10px"></div>
+    </div>
+
+    <!-- লেখা -->
+    <div class="card">
+      <h2>ওয়েবসাইটের লেখা</h2>
+      <div class="grid">
+        <div><label>স্কুলের নাম (উপরের শিরোনাম)</label><input data-key="school_name"></div>
+        <div><label>উপরের ছোট লেখা</label><input data-key="top_tagline"></div>
+        <div><label>ব্যানারের উপ-শিরোনাম</label><input data-key="hero_sub"></div>
+        <div><label>ব্যানারের ব্যাজ</label><input data-key="hero_badge"></div>
+        <div class="full"><label>মূলমন্ত্র / স্লোগান</label><input data-key="slogan"></div>
+
+        <div><label>পরিসংখ্যান ১ — সংখ্যা</label><input data-key="stat1_num"></div>
+        <div><label>পরিসংখ্যান ১ — লেবেল</label><input data-key="stat1_label"></div>
+        <div><label>পরিসংখ্যান ২ — সংখ্যা</label><input data-key="stat2_num"></div>
+        <div><label>পরিসংখ্যান ২ — লেবেল</label><input data-key="stat2_label"></div>
+        <div><label>পরিসংখ্যান ৩ — সংখ্যা</label><input data-key="stat3_num"></div>
+        <div><label>পরিসংখ্যান ৩ — লেবেল</label><input data-key="stat3_label"></div>
+        <div><label>পরিসংখ্যান ৪ — সংখ্যা</label><input data-key="stat4_num"></div>
+        <div><label>পরিসংখ্যান ৪ — লেবেল</label><input data-key="stat4_label"></div>
+
+        <div class="full"><label>প্রধান শিক্ষকের বাণী</label><textarea data-key="principal_message" style="min-height:140px"></textarea></div>
+        <div class="full"><label>আমাদের সম্পর্কে</label><textarea data-key="about_text"></textarea></div>
+        <div class="full"><label>ভর্তি তথ্য</label><textarea data-key="admission_text"></textarea></div>
+
+        <div class="full"><label>ঠিকানা (যোগাযোগ ও ফুটার)</label><input data-key="footer_address"></div>
+        <div><label>মোবাইল নম্বর</label><input data-key="footer_phone"></div>
+        <div><label>ইমেইল</label><input data-key="footer_email"></div>
+      </div>
+      <button class="primary" id="texts-save">লেখাগুলো সংরক্ষণ করুন</button>
+      <p class="msg" id="texts-msg"></p>
+    </div>
+
+    <!-- নোটিশ -->
+    <div class="card">
+      <h2>নোটিশ</h2>
+      <div class="grid">
+        <div><label>শিরোনাম</label><input id="n-title"></div>
+        <div><label>তারিখ</label><input id="n-date" type="date"></div>
+        <div class="full"><label>বিস্তারিত</label><textarea id="n-body"></textarea></div>
+      </div>
+      <button class="primary" id="n-add">নোটিশ যোগ করুন</button>
+      <p class="msg" id="n-msg"></p>
+      <div id="n-list"></div>
+    </div>
+
+    <!-- কার্যক্রম -->
+    <div class="card">
+      <h2>সাম্প্রতিক কার্যক্রম</h2>
+      <div class="grid">
+        <div><label>কার্যক্রমের নাম</label><input id="e-title"></div>
+        <div><label>তারিখ / সময় (লেখায়)</label><input id="e-date" placeholder="যেমন: ১৫ নভেম্বর ২০২৬"></div>
+      </div>
+      <button class="primary" id="e-add">কার্যক্রম যোগ করুন</button>
+      <p class="msg" id="e-msg"></p>
+      <div id="e-list"></div>
+    </div>
+
+    <button id="logout">লগআউট</button>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const configured = window.SUPABASE_URL && window.SUPABASE_ANON_KEY && !window.SUPABASE_URL.includes("PASTE");
+if (!configured) $("cfg-warn").classList.remove("hidden");
+const sb = configured ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+const BUCKET = "public-assets";
+const esc = t => String(t ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const flash = (el, text, ok) => { el.textContent = text; el.className = "msg " + (ok ? "ok" : "bad"); };
+const storagePath = url => { const m = String(url||"").split(`/${BUCKET}/`); return m[1] ? decodeURIComponent(m[1]) : null; };
+
+async function uploadFile(file, name) {
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = `${name}-${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from(BUCKET).upload(path, file, { cacheControl: "3600" });
+  if (error) throw error;
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+async function setSetting(key, value) {
+  const { error } = await sb.from("site_settings").upsert({ key, value }, { onConflict: "key" });
+  if (error) throw error;
+}
+async function getSettings() {
+  const { data } = await sb.from("site_settings").select("*");
+  return Object.fromEntries((data || []).map(r => [r.key, r.value]));
+}
+
+// ---------- লগইন ----------
+async function init() {
+  if (!sb) return;
+  const { data } = await sb.auth.getSession();
+  if (data.session) showPanel(); else $("login-box").classList.remove("hidden");
+}
+function showPanel() { $("login-box").classList.add("hidden"); $("panel").classList.remove("hidden"); loadAll(); }
+$("login-btn").onclick = async () => {
+  const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+  if (error) return flash($("login-msg"), "ইমেইল বা পাসওয়ার্ড ভুল।", false);
+  showPanel();
+};
+$("logout").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+async function loadAll() {
+  const s = await getSettings();
+  document.querySelectorAll("[data-key]").forEach(el => el.value = s[el.dataset.key] || "");
+  ["logo_url","banner_url","side_url"].forEach(k => { const p = $("prev-"+k); if (s[k]) { p.src = s[k]; p.style.display = "block"; } else p.style.display = "none"; });
+  loadNotices(); loadEvents(); loadGallery();
+}
+
+// ---------- ছবি (লোগো, ব্যানার, পাশের ছবি) ----------
+document.querySelectorAll("[data-save]").forEach(btn => btn.onclick = async () => {
+  const key = btn.dataset.save;
+  const input = document.querySelector(`[data-img="${key}"]`);
+  const file = input.files[0];
+  if (!file) return flash($("img-msg"), "আগে ছবি বাছাই করুন।", false);
+  try {
+    const url = await uploadFile(file, input.dataset.name);
+    await setSetting(key, url);
+    $("prev-"+key).src = url; $("prev-"+key).style.display = "block";
+    flash($("img-msg"), "ছবি সংরক্ষিত হয়েছে।", true);
+  } catch (e) { flash($("img-msg"), "আপলোড ব্যর্থ: " + e.message, false); }
+});
+document.querySelectorAll("[data-clear]").forEach(btn => btn.onclick = async () => {
+  if (!confirm("এই ছবিটি মুছবেন?")) return;
+  const key = btn.dataset.clear;
+  const s = await getSettings();
+  const path = storagePath(s[key]);
+  if (path) await sb.storage.from(BUCKET).remove([path]);
+  await setSetting(key, "");
+  $("prev-"+key).style.display = "none";
+  flash($("img-msg"), "ছবি মুছে ফেলা হয়েছে।", true);
+});
+
+// ---------- লেখা ----------
+$("texts-save").onclick = async () => {
+  try {
+    const rows = [...document.querySelectorAll("[data-key]")].map(el => ({ key: el.dataset.key, value: el.value.trim() }));
+    const { error } = await sb.from("site_settings").upsert(rows, { onConflict: "key" });
+    if (error) throw error;
+    flash($("texts-msg"), "লেখাগুলো সংরক্ষিত হয়েছে।", true);
+  } catch (e) { flash($("texts-msg"), "সংরক্ষণ ব্যর্থ: " + e.message, false); }
+};
+
+// ---------- গ্যালারি ----------
+$("gal-upload").onclick = async () => {
+  const files = [...$("gal-files").files];
+  if (!files.length) return flash($("gal-msg"), "ছবি বাছাই করুন।", false);
+  try {
+    for (const f of files) {
+      const url = await uploadFile(f, "gallery");
+      const { error } = await sb.from("gallery").insert({ url, caption: "" });
+      if (error) throw error;
+    }
+    $("gal-files").value = "";
+    flash($("gal-msg"), `${files.length}টি ছবি যোগ হয়েছে।`, true);
+    loadGallery();
+  } catch (e) { flash($("gal-msg"), "আপলোড ব্যর্থ: " + e.message, false); }
+};
+async function loadGallery() {
+  const { data } = await sb.from("gallery").select("*").order("created_at", { ascending: false });
+  $("gal-list").innerHTML = (data || []).map(g => `
+    <div><img src="${esc(g.url)}" alt=""><button data-gdel="${g.id}" data-url="${esc(g.url)}">মুছুন</button></div>`).join("")
+    || `<p class="note">কোনো ছবি নেই।</p>`;
+  document.querySelectorAll("[data-gdel]").forEach(b => b.onclick = async () => {
+    if (!confirm("এই ছবিটি গ্যালারি থেকে মুছবেন?")) return;
+    const path = storagePath(b.dataset.url);
+    if (path) await sb.storage.from(BUCKET).remove([path]);
+    await sb.from("gallery").delete().eq("id", b.dataset.gdel);
+    loadGallery();
+  });
+}
+
+// ---------- নোটিশ ----------
+$("n-add").onclick = async () => {
+  const title = $("n-title").value.trim();
+  if (!title) return flash($("n-msg"), "শিরোনাম লিখুন।", false);
+  const { error } = await sb.from("notices").insert({ title, body: $("n-body").value.trim(), date: $("n-date").value || new Date().toISOString().slice(0,10) });
+  if (error) return flash($("n-msg"), "যোগ করা যায়নি।", false);
+  $("n-title").value = ""; $("n-body").value = "";
+  flash($("n-msg"), "নোটিশ যোগ হয়েছে।", true);
+  loadNotices();
+};
+async function loadNotices() {
+  const { data } = await sb.from("notices").select("*").order("date", { ascending: false });
+  $("n-list").innerHTML = (data || []).map(n => `
+    <div class="item"><div><strong>${esc(n.title)}</strong><div class="note">${esc(n.date)}</div><div>${esc(n.body)}</div></div>
+    <button class="danger" data-ndel="${n.id}">মুছুন</button></div>`).join("") || `<p class="note">কোনো নোটিশ নেই।</p>`;
+  document.querySelectorAll("[data-ndel]").forEach(b => b.onclick = async () => {
+    if (!confirm("এই নোটিশ মুছবেন?")) return;
+    await sb.from("notices").delete().eq("id", b.dataset.ndel);
+    loadNotices();
+  });
+}
+
+// ---------- কার্যক্রম ----------
+$("e-add").onclick = async () => {
+  const title = $("e-title").value.trim();
+  if (!title) return flash($("e-msg"), "কার্যক্রমের নাম লিখুন।", false);
+  const { error } = await sb.from("events").insert({ title, event_date: $("e-date").value.trim() });
+  if (error) return flash($("e-msg"), "যোগ করা যায়নি।", false);
+  $("e-title").value = ""; $("e-date").value = "";
+  flash($("e-msg"), "কার্যক্রম যোগ হয়েছে।", true);
+  loadEvents();
+};
+async function loadEvents() {
+  const { data } = await sb.from("events").select("*").order("created_at", { ascending: false });
+  $("e-list").innerHTML = (data || []).map(e => `
+    <div class="item"><div><strong>${esc(e.title)}</strong><div class="note">${esc(e.event_date || "")}</div></div>
+    <button class="danger" data-edel="${e.id}">মুছুন</button></div>`).join("") || `<p class="note">কোনো কার্যক্রম নেই।</p>`;
+  document.querySelectorAll("[data-edel]").forEach(b => b.onclick = async () => {
+    if (!confirm("এই কার্যক্রম মুছবেন?")) return;
+    await sb.from("events").delete().eq("id", b.dataset.edel);
+    loadEvents();
+  });
+}
+
+init();
+</script>
+</body>
+</html>

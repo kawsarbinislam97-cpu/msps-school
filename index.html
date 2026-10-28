@@ -3,20 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1d4ed8">
+<meta name="theme-color" content="#1e2a78">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="এম এস স্কুল">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <title>এম এস পাবলিক স্কুল - ফি, নম্বর ও হিসাব</title>
 <style>
-  :root { --brand:#1d4ed8; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f5f7fa; --ok:#15803d; --warn:#b45309; --bad:#b91c1c; }
+  :root { --brand:#1e2a78; --accent:#d71f26; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f5f7fa; --ok:#15803d; --warn:#b45309; --bad:#d71f26; }
   * { box-sizing:border-box; }
   body { margin:0; font-family:"Noto Sans Bengali","Kalpurush","Nirmala UI",sans-serif; background:var(--bg); color:var(--ink); font-size:15px; }
-  header { background:var(--brand); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
-  header h1 { margin:0; font-size:19px; }
+  header { background:var(--brand); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:4px solid var(--accent); }
+  header h1 { margin:0; font-size:28px; line-height:1.2; font-weight:700; }
   .status { font-size:12px; padding:3px 10px; border-radius:999px; background:rgba(255,255,255,.2); }
   .status.off { background:#fca5a5; color:#7f1d1d; }
   nav { display:flex; gap:8px; padding:10px 20px; background:#fff; border-bottom:1px solid var(--line); flex-wrap:wrap; }
   nav button { border:1px solid var(--line); background:#fff; padding:8px 14px; border-radius:6px; cursor:pointer; font:inherit; }
   nav button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  nav a.sitelink { display:inline-block; border:1px solid var(--accent); color:var(--accent); background:#fff; padding:8px 14px; border-radius:6px; text-decoration:none; font-weight:600; }
   main { padding:20px; max-width:1200px; margin:0 auto; }
   .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; overflow-x:auto; }
   .card h2 { margin:0 0 12px; font-size:17px; }
@@ -47,12 +54,35 @@
   .total { font-size:18px; font-weight:700; color:var(--brand); }
   .note { font-size:13px; color:var(--muted); margin-top:8px; }
   .msg { font-size:14px; color:var(--ok); margin-top:8px; min-height:18px; }
+  .msg.bad { color:var(--bad); }
   .hidden { display:none !important; }
   #login { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
   #login .card { width:100%; max-width:360px; text-align:center; }
   #login input { text-align:center; font-size:18px; letter-spacing:4px; }
   #receipt { background:#fff; border:2px dashed #9ca3af; padding:16px; border-radius:8px; margin-top:12px; }
+  /* তাগিদ পত্র: এ৪ পাতায় ৪টি করে */
+  #tagid-print { display:none; }
+  .tg-page { width:210mm; height:297mm; box-sizing:border-box; padding:8mm; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4mm; background:#fff; color:#000; page-break-after:always; }
+  .tg { border:1px dashed #777; box-sizing:border-box; padding:4mm; font-size:10pt; display:flex; flex-direction:column; overflow:hidden; }
+  .tg .hd { text-align:center; line-height:1.3; }
+  .tg .hd b { display:block; font-size:13pt; color:#1e2a78; }
+  .tg .hd small { font-size:8.5pt; }
+  .tg .ttl { text-align:center; margin:3mm auto 2mm; border:1.5px solid #000; padding:1mm 4mm; font-weight:700; font-size:12pt; }
+  .tg .info { font-size:9.5pt; line-height:1.9; }
+  .tg .info span { display:inline-block; border-bottom:1px dotted #000; min-width:20mm; padding:0 1mm; }
+  .tg table { width:100%; border-collapse:collapse; font-size:9pt; margin-top:2mm; }
+  .tg th, .tg td { border:1px solid #000; padding:1mm 1.5mm; }
+  .tg th { background:#eef1fb; }
+  .tg td.num, .tg th.num { text-align:right; }
+  .tg tr.total td { font-weight:700; }
+  .tg .note { font-size:8.5pt; margin-top:2mm; line-height:1.5; }
+  .tg .sign { margin-top:auto; text-align:right; font-size:9.5pt; }
+  .tg .sign div { display:inline-block; border-top:1px solid #000; padding-top:1mm; min-width:30mm; text-align:center; }
   @media print {
+    body > *:not(#tagid-print) { display:none !important; }
+    #tagid-print { display:block !important; }
+    #tagid-print, #tagid-print * { visibility:visible !important; }
+    @page { size:A4; margin:0; }
     body * { visibility:hidden; }
     #receipt, #receipt * { visibility:visible; }
     #receipt { position:absolute; left:0; top:0; width:100%; border:none; }
@@ -65,6 +95,7 @@
 <!-- ============ লগইন ============ -->
 <div id="login">
   <div class="card">
+    <img src="logo.png" alt="এম এস পাবলিক স্কুল লোগো" style="width:110px;height:110px;max-width:100%;margin:0 auto 10px;display:block">
     <h2>এম এস পাবলিক স্কুল</h2>
     <p class="note">পিন লিখে প্রবেশ করুন</p>
     <label>পিন</label>
@@ -78,24 +109,31 @@
 <!-- ============ মূল অ্যাপ ============ -->
 <div id="app" class="hidden">
 <header>
-  <div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <img src="logo.png" alt="লোগো" style="width:76px;height:76px;flex:0 0 auto;background:#fff;border-radius:50%;padding:4px">
+    <div>
     <h1>এম এস পাবলিক স্কুল</h1>
     <div style="font-size:13px;opacity:.85">ফি, নম্বর ও হিসাব ব্যবস্থাপনা · এম এস ওয়েলফেয়ার অ্যাসোসিয়েশন</div>
+    </div>
   </div>
   <span class="status" id="net-status">অনলাইন</span>
 </header>
 
 <nav>
   <button data-tab="students" class="active">শিক্ষার্থী</button>
+  <button data-tab="alumni">বিদায়ী শিক্ষার্থী</button>
   <button data-tab="collect">ফি গ্রহণ</button>
   <button data-tab="dues">বকেয়া</button>
   <button data-tab="marks">নম্বর এন্ট্রি</button>
   <button data-tab="results">ফলাফল ও রোল</button>
+  <button data-tab="notice">নোটিশ</button>
+  <button data-tab="birthday">জন্মদিন</button>
   <button data-tab="teachers">শিক্ষক ও বেতন</button>
   <button data-tab="vouchers">ভাউচার ও খরচ</button>
   <button data-tab="report">মাসিক হিসাব</button>
   <button data-tab="rates">ফি কাঠামো</button>
   <button data-tab="backup">ব্যাকআপ ও পিন</button>
+  <a class="sitelink" href="admin.html" target="_blank" rel="noopener">সাইট ব্যবস্থাপনা ↗</a>
 </nav>
 
 <main>
@@ -122,9 +160,31 @@
           <label class="check"><input type="checkbox" id="s-poor"> দরিদ্র (শিক্ষক নির্ধারিত)</label>
         </div>
       </div>
+      <h3 style="margin:18px 0 8px;font-size:15px;color:var(--brand)">ভর্তি ফর্মের অন্যান্য তথ্য</h3>
+      <div class="grid">
+        <div><label>বাবার নাম</label><input id="s-father"></div>
+        <div><label>মায়ের নাম</label><input id="s-mother"></div>
+        <div><label>পিতার পেশা</label><input id="s-occupation"></div>
+        <div><label>ধর্ম</label><input id="s-religion" value="ইসলাম"></div>
+        <div style="grid-column:1/-1"><label>স্থায়ী ঠিকানা (গ্রাম, ডাকঘর, উপজেলা, জেলা)</label><input id="s-address"></div>
+        <div style="grid-column:1/-1"><label>পূর্ববর্তী প্রতিষ্ঠানের নাম ও ঠিকানা (নতুন ভর্তির ক্ষেত্রে)</label><input id="s-prev"></div>
+      </div>
       <button class="primary" id="s-save">যোগ করুন</button>
       <button class="secondary hidden" id="s-cancel">বাতিল</button>
       <p class="msg" id="s-msg"></p>
+    </div>
+    <div class="card">
+      <h2>এক্সেল / CSV থেকে আপলোড</h2>
+      <p class="msg">পুরনো শিক্ষার্থীদের তথ্য একসাথে যোগ করুন। প্রথমে নমুনা ফাইল নামিয়ে নিন, তাতে তথ্য ভরুন (কলামগুলো ভর্তি ফরমের মতো), তারপর ফাইলটি আপলোড করুন। Word ফাইল সরাসরি নেওয়া যায় না, Excel বা CSV-তে সেভ করে নিন।</p>
+      <div class="grid">
+        <div><label>ফাইল (.xlsx, .xls বা .csv)</label><input type="file" id="imp-file" accept=".csv,.xlsx,.xls"></div>
+      </div>
+      <button class="secondary" id="imp-template">নমুনা ফাইল নামান</button>
+      <button class="secondary" id="imp-export">বর্তমান তালিকা এক্সপোর্ট (CSV)</button>
+      <button class="primary" id="imp-check">আপলোড ও যাচাই</button>
+      <div id="imp-preview" style="margin-top:12px"></div>
+      <button class="primary hidden" id="imp-apply">এই শিক্ষার্থীদের যোগ করুন</button>
+      <p class="msg" id="imp-msg"></p>
     </div>
     <div class="card">
       <h2>শিক্ষার্থী তালিকা</h2>
@@ -187,6 +247,18 @@
         </tbody>
       </table>
     </div>
+    <div class="card">
+      <h2>তাগিদ পত্র প্রিন্ট</h2>
+      <p class="msg">এ৪ পাতায় একটি পাতায় ৪টি পত্র। প্রতি শিক্ষার্থীর হিসাব থেকে স্বয়ংক্রিয়ভাবে ভরা হবে।</p>
+      <div class="grid">
+        <div><label>তারিখ</label><input type="date" id="tg-date"></div>
+        <div><label>শ্রেণি</label><select id="tg-class"></select></div>
+        <div><label>প্রতি মাসের শেষ তারিখ</label><input id="tg-deadline" value="০৫"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin:10px 0"><input type="checkbox" id="tg-only-due" checked style="width:auto"> শুধু বকেয়া আছে এমন শিক্ষার্থী</label>
+      <button class="primary" id="tg-print">তাগিদ পত্র প্রিন্ট</button>
+      <p class="msg" id="tg-msg"></p>
+    </div>
   </section>
 
   <!-- নম্বর এন্ট্রি -->
@@ -214,6 +286,11 @@
       </div>
       <button class="secondary" id="r-assign">নতুন শিক্ষার্থীদের রোল বরাদ্দ</button>
       <p class="msg" id="r-msg"></p>
+      <div class="grid" style="margin-top:8px">
+        <div><label>শিক্ষাবর্ষ</label><input id="ms-year" value="2026"></div>
+      </div>
+      <button class="primary" id="ms-class-dl">এই শ্রেণির সব মার্কশিট ডাউনলোড</button>
+      <p class="msg">ডাউনলোড করা ফাইল খুলে "Print → Save as PDF" করলে অভিভাবকের জন্য PDF হবে। প্রতিটি শিক্ষার্থীর জন্য আলাদা পাতা থাকবে।</p>
       <div style="overflow-x:auto"><table id="r-table"></table></div>
       <p class="note">
         ফলাফল = তিন সাময়িক পরীক্ষার মোট প্রাপ্ত ÷ মোট পূর্ণমান × ১০০। মাসিক পরীক্ষার ১০% প্রাপ্ত নম্বরে ও পূর্ণমানে যোগ হয়। সমান হলে উপস্থিত দিন বেশি যার, সে আগে।
@@ -311,12 +388,13 @@
       <table>
         <thead><tr><th>ফি</th><th class="num">টাকা</th><th>কখন</th></tr></thead>
         <tbody>
-          <tr><td>মাসিক পরীক্ষা</td><td class="num">১০০</td><td>৬টি পরীক্ষার প্রতিটিতে</td></tr>
+          <tr><td>মাসিক পরীক্ষা (নার্সারি–টু)</td><td class="num">৫০</td><td>৬টি পরীক্ষার প্রতিটিতে</td></tr>
+          <tr><td>মাসিক পরীক্ষা (থ্রি–ফাইভ)</td><td class="num">৬০</td><td>৬টি পরীক্ষার প্রতিটিতে</td></tr>
           <tr><td>সাময়িক পরীক্ষা</td><td class="num">মাসিক বেতনের সমান</td><td>৩টি পরীক্ষার প্রতিটিতে</td></tr>
           <tr><td>লেসন নোট</td><td class="num">১০</td><td>প্রতি পরীক্ষায় (৯টি)</td></tr>
           <tr><td>প্রবেশপত্র</td><td class="num">৫</td><td>শুধু সাময়িক পরীক্ষায় (৩টি)</td></tr>
-          <tr><td>নতুন ভর্তি</td><td class="num">৭০০</td><td>একবার</td></tr>
-          <tr><td>পুরাতন ভর্তি</td><td class="num">৫০০</td><td>একবার</td></tr>
+          <tr><td>নতুন ভর্তি</td><td class="num">৬০০</td><td>একবার</td></tr>
+          <tr><td>পুরাতন ভর্তি</td><td class="num">৪০০</td><td>একবার</td></tr>
           <tr><td>ডায়েরি</td><td class="num">৭০</td><td>একবার</td></tr>
           <tr><td>বেজ/শোল্ডার</td><td class="num">২০</td><td>একবার</td></tr>
         </tbody>
@@ -332,7 +410,92 @@
     </div>
   </section>
 
+  <!-- জন্মদিন -->
+  <section id="tab-birthday" class="hidden">
+    <div class="card">
+      <h2>জন্মদিনের তালিকা</h2>
+      <div class="grid">
+        <div><label>মাস</label>
+          <select id="bd-month">
+            <option value="1">জানুয়ারি</option><option value="2">ফেব্রুয়ারি</option>
+            <option value="3">মার্চ</option><option value="4">এপ্রিল</option>
+            <option value="5">মে</option><option value="6">জুন</option>
+            <option value="7">জুলাই</option><option value="8">আগস্ট</option>
+            <option value="9">সেপ্টেম্বর</option><option value="10">অক্টোবর</option>
+            <option value="11">নভেম্বর</option><option value="12">ডিসেম্বর</option>
+          </select>
+        </div>
+      </div>
+      <p class="note">২৯ ফেব্রুয়ারি জন্ম হলে অধিবর্ষ ছাড়া বছরে ২৮ ফেব্রুয়ারি দেখানো হবে।</p>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>তারিখ</th><th>নাম</th><th>শ্রেণি</th><th>বয়স</th><th></th></tr></thead>
+          <tbody id="bd-table"></tbody>
+        </table>
+      </div>
+      <p class="msg" id="bd-msg"></p>
+    </div>
+  </section>
+
+  <!-- নোটিশ -->
+  <section id="tab-notice" class="hidden">
+    <div class="card">
+      <h2>নতুন নোটিশ</h2>
+      <p class="note">এই নোটিশগুলো শুধু পিন দিয়ে ঢোকা শিক্ষক ও প্রধান শিক্ষক দেখবেন।</p>
+      <div class="grid">
+        <div><label>শিরোনাম</label><input id="n-title" type="text"></div>
+        <div><label>তারিখ</label><input id="n-date" type="date"></div>
+      </div>
+      <div style="margin-top:10px"><label>বিস্তারিত</label><textarea id="n-body" rows="4"></textarea></div>
+      <button class="primary" id="n-save">নোটিশ যোগ করুন</button>
+      <p class="msg" id="n-msg"></p>
+      <div style="margin-top:14px">
+        <p class="note">পাবলিক বোর্ডে নোটিশ দেখাতে নিচের ফাইলটি ডাউনলোড করে GitHub-এ <b>notices.json</b> নামে আপলোড করুন।</p>
+        <button class="secondary" id="n-export">পাবলিক নোটিশ ফাইল ডাউনলোড</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>নোটিশের তালিকা</h2>
+      <div id="n-list"></div>
+    </div>
+  </section>
+
   <!-- ব্যাকআপ ও পিন -->
+  <section id="tab-alumni" class="hidden">
+    <div class="card">
+      <h2>বিদায়ী শিক্ষার্থী যোগ করুন</h2>
+      <p class="msg">হাজিরা খাতা দেখে পুরনো শিক্ষার্থীদের একে একে যোগ করুন। বর্তমান শিক্ষার্থীকে "শিক্ষার্থী" তালিকা থেকে "বিদায়" চাপলেও এখানে চলে আসবে। এই তালিকার তথ্য ফি, ফলাফল বা রোলের হিসাবে যুক্ত হয় না।</p>
+      <div class="grid">
+        <div><label>নাম</label><input id="al-name"></div>
+        <div><label>শেষ শ্রেণি</label><select id="al-class"></select></div>
+        <div><label>বিদায়ের শিক্ষাবর্ষ</label><input id="al-year" type="number" min="1990" max="2100"></div>
+        <div><label>জন্ম তারিখ</label><input id="al-dob" type="date"></div>
+        <div><label>বাবার নাম</label><input id="al-father"></div>
+        <div><label>মায়ের নাম</label><input id="al-mother"></div>
+        <div><label>অভিভাবকের মোবাইল</label><input id="al-phone"></div>
+        <div><label>ঠিকানা</label><input id="al-address"></div>
+        <div style="grid-column:1/-1"><label>মন্তব্য (বিদায়ের কারণ, যেমন: অন্য স্কুলে ভর্তি)</label><input id="al-note"></div>
+      </div>
+      <button class="primary" id="al-save">যোগ করুন</button>
+      <p class="msg" id="al-msg"></p>
+    </div>
+    <div class="card">
+      <h2>বিদায়ী শিক্ষার্থী তালিকা</h2>
+      <div class="grid">
+        <div><label>শিক্ষাবর্ষ (ফিল্টার)</label><select id="al-filter-year"></select></div>
+        <div><label>খুঁজুন (নাম বা বাবার নাম)</label><input id="al-search"></div>
+      </div>
+      <p class="msg" id="al-summary"></p>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>বিদায়ের বছর</th><th>নাম</th><th>শেষ শ্রেণি</th><th>বাবার নাম</th><th>মোবাইল</th><th>মন্তব্য</th><th class="num">বিদায়ের সময় বকেয়া</th><th></th></tr></thead>
+          <tbody id="al-list"></tbody>
+        </table>
+      </div>
+      <button class="secondary" id="al-export">তালিকা এক্সপোর্ট (CSV)</button>
+    </div>
+  </section>
+
   <section id="tab-backup" class="hidden">
     <div class="card">
       <h2>ব্যাকআপ</h2>
@@ -364,9 +527,9 @@
 // =====================================================
 const CLASSES = ["নার্সারি","স্ট্যান্ডার্ড","ওয়ান","টু","থ্রি","ফোর","ফাইভ"];
 const KEY = "msps_v3";
-const EXAM_MONTHLY = 100, EXAM_MONTHLY_COUNT = 6;
+const EXAM_MONTHLY_COUNT = 6;
 const EXAM_TERM_COUNT = 3, LESSON_NOTE = 10, ADMIT_CARD = 5;
-const ADMISSION = { new: 700, old: 500 };
+const ADMISSION = { new: 600, old: 400 };
 const DIARY = 70, SHOULDER = 20;
 const EXPENSE_CATEGORIES = [
   "শিক্ষক বেতন", "বিদ্যুৎ ও পানি", "মেরামত ও রক্ষণাবেক্ষণ",
@@ -391,6 +554,8 @@ const TERM_MONTHLIES = { T1:["M1","M2"], T2:["M3","M4"], T3:["M5","M6"] };
 const TERMS = ["T1","T2","T3"];
 
 function monthlyRate(cls) { return ["থ্রি","ফোর","ফাইভ"].includes(cls) ? 300 : 250; }
+// মাসিক পরীক্ষার ফি (প্রতিটি): নার্সারি–টু ৫০, থ্রি–ফাইভ ৬০
+function monthlyExamFee(cls) { return ["থ্রি","ফোর","ফাইভ"].includes(cls) ? 60 : 50; }
 function subjectsOf(cls) { return SUBJECTS[cls] || []; }
 function isMonthlyExam(exam) { return exam[0] === "M"; }
 
@@ -405,6 +570,7 @@ function seed() {
     voucherNo: 1,
     teachers: [],
     vouchers: [],
+    notices: [],
     marks: {},          // key: `${studentId}|${exam}|${subjectIndex}` => number or "A"
     attendance: {},     // studentId => উপস্থিত দিন
     rollNext: {},       // শ্রেণি => পরবর্তী রোল
@@ -424,10 +590,12 @@ function load() {
   if (!s || !Array.isArray(s.students)) s = seed();
   s.teachers = s.teachers || [];
   s.vouchers = s.vouchers || [];
+  s.notices = s.notices || [];
   s.voucherNo = s.voucherNo || 1;
   s.marks = s.marks || {};
   s.attendance = s.attendance || {};
   s.rollNext = s.rollNext || {};
+  s.leavers = s.leavers || [];
   s.students.forEach(x => { if (x.roll === undefined) x.roll = null; if (x.income === undefined) x.income = 0; });
   return s;
 }
@@ -449,7 +617,7 @@ function calculate(s) {
   const afterFamily = freeFamily ? 0 : monthlyFull;
   const monthlyPayable = s.poor ? afterFamily / 2 : afterFamily;
   const monthlyDiscount = monthlyFull - monthlyPayable;
-  const examMonthly = EXAM_MONTHLY * EXAM_MONTHLY_COUNT;
+  const examMonthly = monthlyExamFee(s.cls) * EXAM_MONTHLY_COUNT;
   const examTerm = rate * EXAM_TERM_COUNT;
   const lessonNotes = LESSON_NOTE * 9;
   const admitCards = ADMIT_CARD * EXAM_TERM_COUNT;
@@ -584,7 +752,7 @@ function confirmHeadmaster(action) {
 // =====================================================
 // ট্যাব
 // =====================================================
-const TABS = ["students","collect","dues","marks","results","teachers","vouchers","report","rates","backup"];
+const TABS = ["students","alumni","collect","dues","marks","results","teachers","vouchers","report","birthday","notice","rates","backup"];
 document.querySelectorAll("nav button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
@@ -602,7 +770,8 @@ function fillClassSelect(id) {
 }
 function resetStudentForm() {
   document.getElementById("edit-id").value = "";
-  ["s-name","s-dob","s-family","s-phone","s-income"].forEach(id => document.getElementById(id).value = "");
+  ["s-name","s-dob","s-family","s-phone","s-income","s-father","s-mother","s-occupation","s-address","s-prev"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("s-religion").value = "ইসলাম";
   document.getElementById("s-admission").value = "old";
   document.getElementById("s-poor").checked = false;
   document.getElementById("form-title").textContent = "নতুন শিক্ষার্থী যোগ করুন";
@@ -619,6 +788,12 @@ function editStudent(id) {
   document.getElementById("s-phone").value = s.phone || "";
   document.getElementById("s-admission").value = s.admission;
   document.getElementById("s-income").value = s.income || "";
+  document.getElementById("s-father").value = s.father || "";
+  document.getElementById("s-mother").value = s.mother || "";
+  document.getElementById("s-occupation").value = s.occupation || "";
+  document.getElementById("s-religion").value = s.religion || "";
+  document.getElementById("s-address").value = s.address || "";
+  document.getElementById("s-prev").value = s.prev || "";
   document.getElementById("s-poor").checked = !!s.poor;
   document.getElementById("form-title").textContent = "শিক্ষার্থীর তথ্য সম্পাদনা";
   document.getElementById("s-save").textContent = "হালনাগাদ করুন";
@@ -640,10 +815,12 @@ function renderStudents() {
       <td>${esc(s.name)}</td><td>${esc(s.cls)}</td><td>${esc(s.family) || "-"}</td>
       <td>${esc(s.phone) || "-"}</td><td>${tags}</td>
       <td><button class="small" data-edit="${s.id}">সম্পাদনা</button>
+          <button class="small" data-leave="${s.id}">বিদায়</button>
           <button class="danger" data-del="${s.id}">মুছুন</button></td>
     </tr>`;
   }).join("");
   tbody.querySelectorAll("[data-edit]").forEach(b => b.addEventListener("click", () => editStudent(b.dataset.edit)));
+  tbody.querySelectorAll("[data-leave]").forEach(b => b.addEventListener("click", () => leaveStudent(b.dataset.leave)));
   tbody.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
     const s = byId(b.dataset.del);
     if (!confirm(`"${s.name}" ও তার সব রেকর্ড মুছবেন?`)) return;
@@ -663,7 +840,13 @@ document.getElementById("s-save").addEventListener("click", () => {
     phone: document.getElementById("s-phone").value.trim(),
     admission: document.getElementById("s-admission").value,
     income: Math.round(+document.getElementById("s-income").value) || 0,
-    poor: document.getElementById("s-poor").checked
+    poor: document.getElementById("s-poor").checked,
+    father: document.getElementById("s-father").value.trim(),
+    mother: document.getElementById("s-mother").value.trim(),
+    occupation: document.getElementById("s-occupation").value.trim(),
+    religion: document.getElementById("s-religion").value.trim(),
+    address: document.getElementById("s-address").value.trim(),
+    prev: document.getElementById("s-prev").value.trim()
   };
   const editId = document.getElementById("edit-id").value;
   if (editId) {
@@ -676,6 +859,240 @@ document.getElementById("s-save").addEventListener("click", () => {
   save(); resetStudentForm(); refreshAll();
 });
 document.getElementById("s-cancel").addEventListener("click", resetStudentForm);
+
+// ---------- বিদায়ী শিক্ষার্থী ----------
+function leaveStudent(id) {
+  const st = byId(id);
+  if (!st) return;
+  if (!confirm(`"${st.name}" কে বিদায়ী তালিকায় সরাবেন? সে শিক্ষার্থী তালিকা থেকে সরে যাবে।`)) return;
+  const c = calculate(st);
+  const thisYear = new Date().getFullYear();
+  const yr = prompt(`কোন শিক্ষাবর্ষে বিদায় নিলেন? (যেমন: ${thisYear})`, String(thisYear));
+  if (yr === null) return;
+  const leftYear = parseInt(normDigits(yr), 10);
+  if (!(leftYear >= 1990 && leftYear <= 2100)) return alert("সঠিক শিক্ষাবর্ষ লিখুন।");
+  const note = (prompt("মন্তব্য (ঐচ্ছিক, যেমন: অন্য স্কুলে ভর্তি):", "") || "").trim();
+  if (c.due > 0.5 && !confirm(`এই শিক্ষার্থীর ${fmt(c.due)} টাকা বকেয়া আছে। তবুও বিদায়ী তালিকায় সরাবেন?`)) return;
+  state.leavers.push({
+    id: state.nextId++, name: st.name, cls: st.cls, dob: st.dob || "", father: st.father || "",
+    mother: st.mother || "", phone: st.phone || "", address: st.address || "",
+    leftYear, note, dueAtLeave: Math.round(c.due)
+  });
+  state.students = state.students.filter(x => x.id !== st.id);
+  delete state.attendance[st.id];
+  save(); refreshAll();
+}
+
+function renderAlumni() {
+  const fy = document.getElementById("al-filter-year");
+  if (!fy) return;
+  const years = [...new Set(state.leavers.map(x => x.leftYear))].sort((a, b) => b - a);
+  const cur = fy.value;
+  const keep = cur && years.map(String).includes(cur);
+  fy.innerHTML = `<option value="">সব বছর</option>` + years.map(y => `<option value="${y}">${bnDigits(y)}</option>`).join("");
+  fy.value = keep ? cur : "";
+  const q = document.getElementById("al-search").value.trim().toLowerCase();
+  const list = state.leavers
+    .filter(x => (!fy.value || String(x.leftYear) === fy.value) &&
+      (!q || [x.name, x.father].some(v => String(v || "").toLowerCase().includes(q))))
+    .sort((a, b) => (b.leftYear - a.leftYear) || String(a.name).localeCompare(String(b.name), "bn"));
+  const byYear = {};
+  state.leavers.forEach(x => byYear[x.leftYear] = (byYear[x.leftYear] || 0) + 1);
+  document.getElementById("al-summary").innerHTML = state.leavers.length
+    ? `মোট বিদায়ী: <b>${bnDigits(state.leavers.length)}</b> জন। ` + years.map(y => `${bnDigits(y)}: ${bnDigits(byYear[y])} জন`).join(" · ")
+    : "এখনো কোনো বিদায়ী শিক্ষার্থী যোগ হয়নি।";
+  document.getElementById("al-list").innerHTML = list.map(x => `<tr>
+      <td>${bnDigits(x.leftYear)}</td><td>${esc(x.name)}</td><td>${esc(x.cls)}</td>
+      <td>${esc(x.father) || "-"}</td><td>${esc(x.phone) || "-"}</td><td>${esc(x.note) || "-"}</td>
+      <td class="num">${x.dueAtLeave ? fmt(x.dueAtLeave) : "-"}</td>
+      <td><button class="danger" data-adel="${x.id}">মুছুন</button></td>
+    </tr>`).join("") || `<tr><td colspan="8">কোনো তথ্য নেই</td></tr>`;
+}
+document.getElementById("al-class").innerHTML = CLASSES.map(c => `<option value="${c}">${c}</option>`).join("");
+document.getElementById("al-filter-year").addEventListener("change", renderAlumni);
+document.getElementById("al-search").addEventListener("input", renderAlumni);
+document.getElementById("al-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-adel]");
+  if (!b) return;
+  const x = state.leavers.find(v => String(v.id) === b.dataset.adel);
+  if (!x || !confirm(`"${x.name}" কে বিদায়ী তালিকা থেকে মুছবেন?`)) return;
+  state.leavers = state.leavers.filter(v => v !== x);
+  save(); renderAlumni();
+});
+document.getElementById("al-save").addEventListener("click", () => {
+  const msg = document.getElementById("al-msg");
+  const name = document.getElementById("al-name").value.trim();
+  const cls = document.getElementById("al-class").value;
+  const leftYear = parseInt(normDigits(document.getElementById("al-year").value), 10);
+  if (!name) return showMsg(msg, "নাম লিখুন।", false);
+  if (!(leftYear >= 1990 && leftYear <= 2100)) return showMsg(msg, "সঠিক বিদায়ের শিক্ষাবর্ষ লিখুন।", false);
+  state.leavers.push({
+    id: state.nextId++, name, cls, leftYear,
+    dob: document.getElementById("al-dob").value,
+    father: document.getElementById("al-father").value.trim(),
+    mother: document.getElementById("al-mother").value.trim(),
+    phone: normDigits(document.getElementById("al-phone").value),
+    address: document.getElementById("al-address").value.trim(),
+    note: document.getElementById("al-note").value.trim(),
+    dueAtLeave: null
+  });
+  ["al-name","al-year","al-dob","al-father","al-mother","al-phone","al-address","al-note"].forEach(id => document.getElementById(id).value = "");
+  save(); renderAlumni();
+  showMsg(msg, `"${name}" বিদায়ী তালিকায় যোগ হয়েছে।`, true);
+});
+document.getElementById("al-export").addEventListener("click", () => {
+  const rows = [...state.leavers].sort((a, b) => (b.leftYear - a.leftYear)).map(x => [
+    x.leftYear, x.name, x.cls, x.dob || "", x.father || "", x.mother || "", x.phone || "", x.address || "", x.note || "", x.dueAtLeave ?? ""]);
+  downloadCsv(`msps-alumni-${todayISO()}.csv`, [["শিক্ষাবর্ষ","নাম","শেষ শ্রেণি","জন্ম তারিখ","বাবার নাম","মায়ের নাম","মোবাইল","ঠিকানা","মন্তব্য","বিদায়ের সময় বকেয়া"], ...rows]);
+});
+
+// ---------- এক্সেল / CSV আমদানি ও রপ্তানি ----------
+const IMP_HEADERS = ["নাম","শ্রেণি","জন্ম তারিখ","পরিবার আইডি","অভিভাবকের মোবাইল","ভর্তির ধরন","বার্ষিক আয়","দরিদ্র","বাবার নাম","মায়ের নাম","পেশা","ধর্ম","ঠিকানা","পূর্ববর্তী প্রতিষ্ঠান"];
+const IMP_KEYS = {
+  name:["নাম"], cls:["শ্রেণি"], dob:["জন্ম তারিখ"], family:["পরিবার আইডি"],
+  phone:["অভিভাবকের মোবাইল","মোবাইল"], admission:["ভর্তির ধরন"],
+  income:["বার্ষিক আয়","বার্ষিক পারিবারিক আয়","বার্ষিক পারিবারিক আয় (টাকা)"],
+  poor:["দরিদ্র","দরিদ্র (হ্যাঁ/না)"], father:["বাবার নাম"], mother:["মায়ের নাম"],
+  occupation:["পেশা","পিতার পেশা"], religion:["ধর্ম"], address:["ঠিকানা","স্থায়ী ঠিকানা"],
+  prev:["পূর্ববর্তী প্রতিষ্ঠান","পূর্ববর্তী প্রতিষ্ঠানের নাম ও ঠিকানা"]
+};
+let pendingImport = [];
+
+function normDigits(s) { return String(s ?? "").replace(/[০-৯]/g, d => "০১২৩৪৫৬৭৮৯".indexOf(d)).trim(); }
+function normDate(s) {
+  const t = normDigits(s);
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+  m = t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
+  return "";
+}
+function parseCsv(text) {
+  const rows = []; let row = [], field = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) {
+      if (ch === '"') { if (text[i+1] === '"') { field += '"'; i++; } else q = false; }
+      else field += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ",") { row.push(field); field = ""; }
+    else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && text[i+1] === "\n") i++;
+      row.push(field); rows.push(row); row = []; field = "";
+    } else field += ch;
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(c => String(c).trim() !== ""));
+}
+function loadXlsxLib() {
+  return new Promise((res, rej) => {
+    if (window.XLSX) return res(window.XLSX);
+    const sc = document.createElement("script");
+    sc.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+    sc.onload = () => res(window.XLSX);
+    sc.onerror = () => rej(new Error("Excel লাইব্রেরি লোড হয়নি। ইন্টারনেট চালু আছে কিনা দেখুন, অথবা CSV ফাইল ব্যবহার করুন।"));
+    document.head.appendChild(sc);
+  });
+}
+async function readTable(file) {
+  if (/\.csv$/i.test(file.name)) return parseCsv((await file.text()).replace(/^\uFEFF/, ""));
+  const X = await loadXlsxLib();
+  const wb = X.read(await file.arrayBuffer(), { type: "array" });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  return X.utils.sheet_to_json(ws, { header: 1, raw: false, dateNF: "yyyy-mm-dd", defval: "" });
+}
+function parseImportRows(table) {
+  const out = [], errors = [], seen = new Set();
+  if (!table.length) return { rows: out, errors: ["ফাইল খালি"] };
+  const headers = table[0].map(h => String(h ?? "").trim().replace(/\s+/g, " "));
+  const idx = {};
+  headers.forEach((h, i) => {
+    const k = Object.keys(IMP_KEYS).find(k => IMP_KEYS[k].includes(h));
+    if (k && idx[k] === undefined) idx[k] = i;
+  });
+  if (idx.name === undefined || idx.cls === undefined)
+    return { rows: out, errors: ["ফাইলে 'নাম' ও 'শ্রেণি' কলাম থাকতে হবে।"] };
+  const get = (r, k) => idx[k] === undefined ? "" : String(r[idx[k]] ?? "").trim();
+  table.slice(1).forEach((r, n) => {
+    const line = n + 2;
+    if (!r.some(c => String(c ?? "").trim() !== "")) return;
+    const name = get(r, "name"), cls = get(r, "cls"), father = get(r, "father");
+    if (!name) { errors.push(`সারি ${line}: নাম নেই`); return; }
+    if (!CLASSES.includes(cls)) { errors.push(`সারি ${line} (${name}): শ্রেণি "${cls}" ঠিক নেই`); return; }
+    const key = [name, cls, father].join("|").toLowerCase();
+    const dupFile = seen.has(key);
+    const dupDb = state.students.some(s => s.cls === cls && s.name === name && (s.father || "") === father);
+    if (dupFile || dupDb) { errors.push(`সারি ${line} (${name}): আগে থেকেই আছে, বাদ দেওয়া হলো`); return; }
+    seen.add(key);
+    out.push({
+      name, cls,
+      dob: normDate(get(r, "dob")),
+      family: get(r, "family"),
+      phone: normDigits(get(r, "phone")),
+      admission: /নতুন|new/i.test(get(r, "admission")) ? "new" : "old",
+      income: Math.round(Number(normDigits(get(r, "income")).replace(/,/g, ""))) || 0,
+      poor: /হ্যাঁ|হাঁ|yes|^y$|true|দরিদ্র/i.test(get(r, "poor")),
+      father, mother: get(r, "mother"), occupation: get(r, "occupation"),
+      religion: get(r, "religion") || "ইসলাম", address: get(r, "address"), prev: get(r, "prev")
+    });
+  });
+  return { rows: out, errors };
+}
+function csvCell(v) {
+  const t = String(v ?? "");
+  return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+}
+function downloadCsv(name, rows) {
+  const text = "\uFEFF" + rows.map(r => r.map(csvCell).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "text/csv;charset=utf-8" }));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+}
+function showImportMsg(text, ok) {
+  const m = document.getElementById("imp-msg");
+  m.textContent = text; m.style.color = ok ? "" : "var(--bad)";
+}
+
+document.getElementById("imp-template").addEventListener("click", () => {
+  downloadCsv("msps-students-template.csv", [IMP_HEADERS,
+    ["রফিক উদ্দিন","ওয়ান","2019-03-10","F-001","01888000001","পুরাতন শিক্ষার্থী","50000","না","মো. নূর আহমেদ","কহিনুর আক্তার","ব্যবসা","ইসলাম","গ্রাম: পূর্ব মেহের নগর, ডাকঘর: পেকুয়া, উপজেলা: পেকুয়া, জেলা: কক্সবাজার",""]]);
+  showImportMsg("নমুনা ফাইল নামানো হয়েছে। প্রথম সারির উদাহরণটি মুছে আপনার তথ্য ভরুন।", true);
+});
+document.getElementById("imp-export").addEventListener("click", () => {
+  const rows = state.students.map(s => [s.name, s.cls, s.dob || "", s.family || "", s.phone || "",
+    s.admission === "new" ? "নতুন ভর্তি" : "পুরাতন শিক্ষার্থী", s.income || 0, s.poor ? "হ্যাঁ" : "না",
+    s.father || "", s.mother || "", s.occupation || "", s.religion || "", s.address || "", s.prev || ""]);
+  downloadCsv(`msps-students-${todayISO()}.csv`, [IMP_HEADERS, ...rows]);
+  showImportMsg(`${state.students.length} জনের তালিকা এক্সপোর্ট হয়েছে।`, true);
+});
+document.getElementById("imp-check").addEventListener("click", async () => {
+  const file = document.getElementById("imp-file").files[0];
+  const preview = document.getElementById("imp-preview");
+  const apply = document.getElementById("imp-apply");
+  pendingImport = []; apply.classList.add("hidden"); preview.innerHTML = "";
+  if (!file) return showImportMsg("আগে একটি ফাইল বেছে নিন।", false);
+  try {
+    const { rows, errors } = parseImportRows(await readTable(file));
+    pendingImport = rows;
+    preview.innerHTML = `<p><b>যোগ হবে:</b> ${rows.length} জন</p>` +
+      (errors.length ? `<p style="color:var(--bad)"><b>বাদ/সমস্যা (${errors.length}):</b></p><ul>${errors.slice(0, 40).map(e => `<li>${esc(e)}</li>`).join("")}</ul>` : "");
+    if (rows.length) apply.classList.remove("hidden");
+    showImportMsg(rows.length ? "যাচাই শেষ। নিচে দেখে নিয়ে যোগ করুন।" : "যোগ করার মতো কোনো সারি পাওয়া যায়নি।", rows.length > 0);
+  } catch (e) {
+    showImportMsg(e.message || "ফাইল পড়া যায়নি।", false);
+  }
+});
+document.getElementById("imp-apply").addEventListener("click", () => {
+  if (!pendingImport.length) return;
+  const n = pendingImport.length;
+  pendingImport.forEach(d => state.students.push({ id: state.nextId++, ...d, roll: null, payments: [] }));
+  pendingImport = [];
+  save(); refreshAll();
+  document.getElementById("imp-preview").innerHTML = "";
+  document.getElementById("imp-apply").classList.add("hidden");
+  document.getElementById("imp-file").value = "";
+  showImportMsg(`${n} জন শিক্ষার্থী যোগ হয়েছে।`, true);
+});
 
 // =====================================================
 // ফি গ্রহণ
@@ -748,6 +1165,62 @@ document.getElementById("c-print").addEventListener("click", () => window.print(
 // =====================================================
 // বকেয়া
 // =====================================================
+// ---------- তাগিদ পত্র ----------
+function letterHtml(s, date, deadline) {
+  const c = calculate(s);
+  const dateBn = d => d ? new Date(d + "T00:00:00").toLocaleDateString("bn-BD", { day:"numeric", month:"long", year:"numeric" }) : "";
+  const otherOnly = c.otherTotal - c.admission;
+  const rows = [
+    ["০১", "মাসিক বেতন (বার্ষিক)", c.monthlyPayable],
+    ["০২", "পরীক্ষার ফি, লেসন নোট, অ্যাডমিট কার্ড", c.examTotal],
+    ["০৩", "ভর্তি/পুনঃ ভর্তি", c.admission],
+    ["০৪", "সিলেবাস/ডায়েরী/ব্যাজ/বিবিধ", otherOnly],
+  ].map(([n, t, v]) => `<tr><td>${n}</td><td>${t}</td><td class="num">${v ? fmt(v) : "-"}</td></tr>`).join("");
+  return `<div class="tg">
+    <div class="hd"><b>এম.এস. পাবলিক স্কুল</b><small>শিলখালী (সাঁকোর পাড়), পেকুয়া, কক্সবাজার</small></div>
+    <div class="ttl">তাগিদ পত্র</div>
+    <div class="info">
+      শিক্ষার্থীর নাম: <span>${esc(s.name)}</span><br>
+      শ্রেণি: <span>${esc(s.cls)}</span> &nbsp; রোল নং: <span>${s.roll ?? "-"}</span><br>
+      তারিখ: <span>${dateBn(date)}</span>
+    </div>
+    <table>
+      <thead><tr><th>ক্র.নং</th><th>বিবরণ</th><th class="num">টাকা</th></tr></thead>
+      <tbody>${rows}
+        <tr class="total"><td colspan="2">মোট প্রদেয়</td><td class="num">${fmt(c.grandTotal)}</td></tr>
+        <tr><td colspan="2">পরিশোধিত</td><td class="num">${fmt(c.paid)}</td></tr>
+        <tr class="total"><td colspan="2">এখন বকেয়া</td><td class="num">${fmt(c.due)}</td></tr>
+      </tbody>
+    </table>
+    <div class="note">বিঃদ্রঃ প্রতি মাসের ${esc(deadline)} তারিখের মধ্যে সকল পাওনা পরিশোধ করে বিদ্যালয়ের কার্যক্রমে সহযোগিতা করবার জন্য বিনীত অনুরোধ রইল।</div>
+    <div class="sign"><div>শ্রেণি শিক্ষক</div></div>
+  </div>`;
+}
+
+document.getElementById("tg-class").innerHTML = `<option value="">সব শ্রেণি</option>` +
+  CLASSES.map(c => `<option value="${c}">${c}</option>`).join("");
+document.getElementById("tg-date").value = todayISO();
+
+document.getElementById("tg-print").addEventListener("click", () => {
+  const msg = document.getElementById("tg-msg");
+  const cls = document.getElementById("tg-class").value;
+  const onlyDue = document.getElementById("tg-only-due").checked;
+  const date = document.getElementById("tg-date").value || todayISO();
+  const deadline = document.getElementById("tg-deadline").value.trim() || "০৫";
+  let list = state.students.filter(s => !cls || s.cls === cls);
+  if (onlyDue) list = list.filter(s => calculate(s).due > 0.5);
+  if (!list.length) { msg.textContent = "কোনো শিক্ষার্থী পাওয়া যায়নি।"; msg.style.color = "var(--bad)"; return; }
+  msg.textContent = `${list.length} জনের পত্র তৈরি হচ্ছে...`; msg.style.color = "";
+  const pages = [];
+  for (let i = 0; i < list.length; i += 4) {
+    const chunk = list.slice(i, i + 4).map(s => letterHtml(s, date, deadline));
+    while (chunk.length < 4) chunk.push(`<div></div>`);
+    pages.push(`<div class="tg-page">${chunk.join("")}</div>`);
+  }
+  document.getElementById("tagid-print").innerHTML = pages.join("");
+  setTimeout(() => window.print(), 150);
+});
+
 function renderDues() {
   let totalDue = 0, totalPaid = 0, totalOut = 0;
   document.getElementById("d-list").innerHTML = state.students.map(s => {
@@ -828,7 +1301,7 @@ function renderResults() {
   if (!list.length) { table.innerHTML = `<tr><td>এই শ্রেণিতে কোনো শিক্ষার্থী নেই</td></tr>`; return; }
   table.innerHTML = `<thead><tr>
       <th>রোল</th><th>নাম</th><th class="num">প্রাপ্ত</th><th class="num">পূর্ণমান</th>
-      <th class="num">শতকরা</th><th>বিষয়ে ফেল</th><th>অবস্থা</th><th>উপস্থিত দিন</th>
+      <th class="num">শতকরা</th><th>বিষয়ে ফেল</th><th>অবস্থা</th><th>উপস্থিত দিন</th><th></th>
     </tr></thead>
     <tbody>${list.map(({ s, a }) => {
       const st = statusOf(s);
@@ -841,6 +1314,7 @@ function renderResults() {
         <td>${a.fails.length ? esc(a.fails.join("، ")) : "-"}</td>
         <td><span class="tag ${st.cls}">${st.text}</span></td>
         <td><input class="att" type="number" min="0" data-att="${s.id}" value="${state.attendance[s.id] ?? ""}"></td>
+        <td><button class="secondary" data-ms="${s.id}">মার্কশিট</button></td>
       </tr>`;
     }).join("")}</tbody>`;
   table.querySelectorAll("[data-att]").forEach(inp => inp.addEventListener("change", () => {
@@ -851,6 +1325,121 @@ function renderResults() {
   }));
 }
 document.getElementById("r-class").addEventListener("change", renderResults);
+
+// ---------- বার্ষিক মার্কশিট ----------
+const MS_CSS = `
+body{font-family:"Noto Sans Bengali","Nirmala UI",sans-serif;color:#111;margin:0;background:#eef1f7}
+.ms{width:210mm;min-height:297mm;box-sizing:border-box;padding:12mm;margin:0 auto 10mm;background:#fff;page-break-after:always}
+.ms .hd{text-align:center;border-bottom:3px solid #1e2a78;padding-bottom:6px}
+.ms .hd h1{margin:0;color:#1e2a78;font-size:22px}
+.ms .hd p{margin:2px 0;font-size:13px}
+.ms .ttl{text-align:center;margin:12px 0}
+.ms .ttl span{display:inline-block;border:1.5px solid #d71f26;padding:4px 16px;font-weight:700;font-size:16px}
+.ms .info{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;font-size:14px;margin-bottom:10px}
+.ms table{width:100%;border-collapse:collapse;font-size:13px}
+.ms th,.ms td{border:1px solid #333;padding:5px 6px}
+.ms th{background:#1e2a78;color:#fff}
+.ms td.c,.ms th.c{text-align:center}
+.ms tr.foot td{background:#f3f5fb;font-weight:600}
+.ms td.bad{color:#d71f26;font-weight:700}
+.ms .sum{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:14px}
+.ms .sum b{color:#1e2a78}
+.ms .sign{display:flex;justify-content:space-between;margin-top:48px;font-size:13px}
+.ms .sign div{border-top:1px solid #333;padding-top:4px;min-width:160px;text-align:center}
+.ms .note{font-size:12px;color:#555;margin-top:10px}
+@media print{body{background:#fff}.ms{margin:0;page-break-after:always}@page{size:A4;margin:0}}
+`;
+const bnDigits = t => String(t).replace(/[0-9]/g, d => "০১২৩৪৫৬৭৮৯"[d]);
+
+function marksheetSheet(s, year) {
+  const subs = subjectsOf(s.cls);
+  const a = annualCalc(s);
+  const termR = TERMS.map(t => termCalc(s, t));
+  const rank = rankedClass(s.cls);
+  const pos = rank.findIndex(x => x.s.id === s.id) + 1;
+  const markOf = (t, i) => { const m = markVal(s.id, t, i); return (m === null || m === "A") ? 0 : m; };
+  const rawTerm = TERMS.map(t => subs.reduce((acc, _, i) => acc + markOf(t, i), 0));
+  const bonusTerm = termR.map((r, k) => r.entered ? r.obt - rawTerm[k] : 0);
+
+  const subRows = subs.map((sub, i) => {
+    let tot = 0;
+    const cells = TERMS.map(t => {
+      const m = markVal(s.id, t, i);
+      const failed = m !== null && (m === "A" || m < sub.pass);
+      tot += markOf(t, i);
+      const txt = m === null ? "-" : (m === "A" ? "অনুপস্থিত" : m);
+      return `<td class="c${failed ? " bad" : ""}">${bnDigits(txt)}</td>`;
+    }).join("");
+    return `<tr><td>${esc(sub.name)}</td>${cells}<td class="c"><b>${bnDigits(tot)}</b></td><td class="c">${bnDigits(sub.max * 3)}</td></tr>`;
+  }).join("");
+
+  const foot = (label, vals, total) => `<tr class="foot"><td>${label}</td>${vals.map(v => `<td class="c">${bnDigits(fmt2(v))}</td>`).join("")}<td class="c">${bnDigits(fmt2(total))}</td><td></td></tr>`;
+  const footRows = foot("সাময়িক মোট (বিষয়ভিত্তিক)", rawTerm, rawTerm.reduce((x, y) => x + y, 0))
+    + foot("মাসিক পরীক্ষার ১০% যোগ", bonusTerm, bonusTerm.reduce((x, y) => x + y, 0))
+    + foot("সাময়িক মোট প্রাপ্ত", termR.map(r => r.obt), a.obt)
+    + foot("সাময়িক পূর্ণমান", termR.map(r => r.max), a.max);
+
+  const attendance = state.attendance[s.id];
+  const body = a.entered ? `
+    <table>
+      <thead><tr><th>বিষয়</th>${TERMS.map(t => `<th class="c">${EXAM_LABEL[t]}</th>`).join("")}<th class="c">বার্ষিক মোট</th><th class="c">বার্ষিক পূর্ণমান</th></tr></thead>
+      <tbody>${subRows}${footRows}</tbody>
+    </table>
+    <div class="sum">
+      <div>বার্ষিক প্রাপ্ত নম্বর: <b>${bnDigits(fmt2(a.obt))}</b></div>
+      <div>পূর্ণমান: <b>${bnDigits(fmt2(a.max))}</b></div>
+      <div>শতকরা: <b>${bnDigits(fmt2(a.pct))}%</b></div>
+      <div>ফলাফল: <b>${statusOf(s).text}</b></div>
+      <div>বিষয়ে ফেল: <b>${a.fails.length ? esc(a.fails.join(", ")) : "নেই"}</b></div>
+      <div>শ্রেণিতে অবস্থান: <b>${showRankText(pos)}</b></div>
+      <div>উপস্থিত দিন: <b>${attendance !== undefined ? bnDigits(attendance) : "-"}</b></div>
+    </div>`
+    : `<p>এই শিক্ষার্থীর নম্বর এখনো এন্ট্রি হয়নি।</p>`;
+  return `<div class="ms">
+    <div class="hd"><h1>এম.এস. পাবলিক স্কুল</h1><p>শিলখালী (সাঁকোর পাড়), পেকুয়া, কক্সবাজার</p></div>
+    <div class="ttl"><span>বার্ষিক পরীক্ষার ফলাফল (মার্কশিট) — ${bnDigits(year)}</span></div>
+    <div class="info">
+      <div>শিক্ষার্থীর নাম: <b>${esc(s.name)}</b></div>
+      <div>শ্রেণি: <b>${esc(s.cls)}</b></div>
+      <div>রোল নং: <b>${s.roll != null ? bnDigits(s.roll) : "-"}</b></div>
+      <div>জন্ম তারিখ: <b>${s.dob ? bnDigits(s.dob) : "-"}</b></div>
+      <div>বাবার নাম: <b>${esc(s.father || "-")}</b></div>
+      <div>মায়ের নাম: <b>${esc(s.mother || "-")}</b></div>
+    </div>
+    ${body}
+    <div class="sign"><div>শ্রেণি শিক্ষক</div><div>প্রধান শিক্ষক</div><div>অভিভাবকের স্বাক্ষর</div></div>
+    <p class="note">বিঃদ্রঃ মাসিক পরীক্ষার ১০% সাময়িক পরীক্ষার সাথে যোগ হয়। যে পরীক্ষা হয়নি তার নম্বর যোগ হয় না।</p>
+  </div>`;
+}
+function showRankText(pos) { return pos > 0 ? bnDigits(pos) : "-"; }
+
+function marksheetDoc(list, year, title) {
+  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(title)}</title><style>${MS_CSS}</style></head><body>
+${list.map(s => marksheetSheet(s, year)).join("")}
+</body></html>`;
+}
+function downloadFile(name, text, mime) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: mime }));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+}
+document.getElementById("ms-class-dl").addEventListener("click", () => {
+  const cls = document.getElementById("r-class").value || CLASSES[0];
+  const year = document.getElementById("ms-year").value.trim() || "2026";
+  const list = rankedClass(cls).map(x => x.s);
+  if (!list.length) return showMsg(document.getElementById("r-msg"), "এই শ্রেণিতে কোনো শিক্ষার্থী নেই।", false);
+  downloadFile(`msps-marksheet-${cls}-${year}.html`, marksheetDoc(list, year, `${cls} মার্কশিট ${year}`), "text/html;charset=utf-8");
+  showMsg(document.getElementById("r-msg"), `${list.length} জনের মার্কশিট ডাউনলোড হয়েছে।`, true);
+});
+document.getElementById("r-table").addEventListener("click", e => {
+  const btn = e.target.closest("[data-ms]");
+  if (!btn) return;
+  const s = byId(btn.dataset.ms);
+  const year = document.getElementById("ms-year").value.trim() || "2026";
+  if (!s) return;
+  downloadFile(`msps-marksheet-${s.name}-${year}.html`, marksheetDoc([s], year, `${s.name} মার্কশিট ${year}`), "text/html;charset=utf-8");
+});
 document.getElementById("r-assign").addEventListener("click", () => {
   const msg = document.getElementById("r-msg");
   const cls = document.getElementById("r-class").value;
@@ -1132,7 +1721,109 @@ function updateNet() {
 window.addEventListener("online", updateNet);
 window.addEventListener("offline", updateNet);
 
+// =====================================================
+// জন্মদিন ও নোটিশ
+// =====================================================
+function bdayMD(dob, year) {
+  const [, m, d] = dob.split("-").map(Number);
+  const leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  if (m === 2 && d === 29 && !leap) return { m: 2, d: 28 };
+  return { m, d };
+}
+function renderBirthday() {
+  const sel = document.getElementById("bd-month");
+  if (!sel.value) sel.value = String(new Date().getMonth() + 1);
+  const month = Number(sel.value);
+  const now = new Date();
+  const year = now.getFullYear();
+  const list = state.students
+    .filter(s => s.dob)
+    .map(s => ({ s, md: bdayMD(s.dob, year) }))
+    .filter(x => x.md.m === month)
+    .sort((a, b) => a.md.d - b.md.d);
+  const tbody = document.getElementById("bd-table");
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="note">এই মাসে কারও জন্মদিন নেই।</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(({ s, md }) => {
+    const isToday = md.m === now.getMonth() + 1 && md.d === now.getDate();
+    const age = year - Number(s.dob.slice(0, 4));
+    return `<tr>
+      <td>${md.d}</td>
+      <td>${s.name}${isToday ? ' <span class="tag paid">আজ</span>' : ""}</td>
+      <td>${s.cls}</td>
+      <td>${age} বছর</td>
+      <td><button class="secondary" data-greet="${s.id}">শুভেচ্ছা কপি</button></td>
+    </tr>`;
+  }).join("");
+  tbody.querySelectorAll("[data-greet]").forEach(b => b.addEventListener("click", async () => {
+    const s = state.students.find(x => x.id === Number(b.dataset.greet));
+    if (!s) return;
+    const text = `প্রিয় ${s.name}, তোমাকে জন্মদিনের অনেক শুভেচ্ছা! — এম এস পাবলিক স্কুল`;
+    const msg = document.getElementById("bd-msg");
+    try {
+      await navigator.clipboard.writeText(text);
+      msg.textContent = "শুভেচ্ছা বার্তা কপি হয়েছে।";
+    } catch (e) {
+      msg.textContent = text;
+    }
+    msg.className = "msg ok";
+  }));
+}
+document.getElementById("bd-month").addEventListener("change", renderBirthday);
+
+function renderNotice() {
+  const list = [...(state.notices || [])].sort((a, b) => b.date.localeCompare(a.date));
+  const box = document.getElementById("n-list");
+  if (!list.length) { box.innerHTML = `<p class="note">এখনো কোনো নোটিশ নেই।</p>`; return; }
+  const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  box.innerHTML = list.map(n => `
+    <div style="border-bottom:1px solid var(--line);padding:10px 0">
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <strong>${esc(n.title)}</strong><span class="note">${n.date}</span>
+      </div>
+      <div style="white-space:pre-wrap;margin-top:4px">${esc(n.body)}</div>
+      <button class="secondary" data-ndel="${n.id}" style="margin-top:6px">মুছুন</button>
+    </div>`).join("");
+  box.querySelectorAll("[data-ndel]").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("এই নোটিশটি মুছবেন?")) return;
+    state.notices = state.notices.filter(x => String(x.id) !== b.dataset.ndel);
+    save();
+    renderNotice();
+  }));
+}
+document.getElementById("n-save").addEventListener("click", () => {
+  const title = document.getElementById("n-title").value.trim();
+  const body = document.getElementById("n-body").value.trim();
+  const date = document.getElementById("n-date").value || todayISO();
+  const msg = document.getElementById("n-msg");
+  if (!title) { msg.textContent = "শিরোনাম লিখুন।"; msg.className = "msg bad"; return; }
+  state.notices = state.notices || [];
+  state.notices.push({ id: Date.now(), title, body, date });
+  save();
+  document.getElementById("n-title").value = "";
+  document.getElementById("n-body").value = "";
+  msg.textContent = "নোটিশ যোগ হয়েছে।"; msg.className = "msg ok";
+  renderNotice();
+});
+
+document.getElementById("n-export").addEventListener("click", () => {
+  const data = (state.notices || []).map(n => ({ title: n.title, date: n.date, body: n.body }));
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "notices.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
 function refreshAll() {
+  renderBirthday();
+  renderAlumni();
+  renderNotice();
   renderStudents();
   refreshStudentSelects();
   updateCollectInfo();
@@ -1164,5 +1855,6 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
 </script>
+<div id="tagid-print"></div>
 </body>
 </html>

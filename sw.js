@@ -1,6 +1,6 @@
 // অফলাইনে কাজ করার জন্য: অ্যাপের ফাইলগুলো ক্যাশে রাখে।
 // ফাইল পরিবর্তন করলে CACHE_NAME-এর সংখ্যা বাড়িয়ে দিন, যাতে নতুন সংস্করণ নেওয়া হয়।
-const CACHE_NAME = "msps-v8";
+const CACHE_NAME = "msps-v14";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
